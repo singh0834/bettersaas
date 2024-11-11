@@ -1,0 +1,502 @@
+{% extends "bettersaas/templates/web.html" %} {% block style %}
+
+
+<!-- no-header -->
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <style>
+    
+  body {font-family: Arial, Helvetica, sans-serif;}
+
+  .container2 {
+  margin-top: 20%;
+  width: 80%;
+  text-align: center;
+}
+
+.progress2 {
+  padding: 2px;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.25);  
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.progress-bar2 {
+  height: 3px;
+  border-radius: 20px;
+  background-image: 
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.911), rgba(255, 255, 255, 0.05));
+  transition: 1.5s linear;  
+  transition-property: width, background-color;    
+}
+
+.progress-moved .progress-bar2 {
+  animation: progressAnimation 50s forwards;
+}
+
+@keyframes progressAnimation {
+  0% { width: 0%; background-color: rgba(110, 204, 91, 1); }
+  48% { width: 48%; background-color: rgba(110, 204, 91, 1); }
+  100% { width: 98%; background-color: rgba(110, 204, 91, 1); }
+}
+
+  
+    .loader-container {
+      text-align: center;
+      justify-content: center;
+      animation: fadeIn 2s ease-in-out, moveUp 4s infinite alternate;
+    }
+    /* .loading-dots {
+      display: inline-block;
+      font-size: 32px;
+      color: #333;
+      animation: blink 1.5s infinite;
+    } */
+    .loading-text {
+      margin-top: 0;
+      font-size: 15px;
+      color: #333;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    
+    @keyframes moveUp {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(-20px);
+      }
+    }
+    
+    @keyframes blink {
+      0%, 100% {
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+    .fade-in-animation {
+      animation: fadeIn 2s ease-in-out, moveUp 4s infinite alternate;
+    }
+  </style>
+
+
+  </head>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- <script>
+  const loadingPhrases = [
+    'Just a moment while we work our magic',
+  ];
+  
+  let currentPhraseIndex = 0;
+  
+  function updateLoadingText() {
+    document.querySelector('.loading-text').textContent =
+      loadingPhrases[currentPhraseIndex];
+    currentPhraseIndex = (currentPhraseIndex + 1) % loadingPhrases.length;
+  }
+  
+  setInterval(updateLoadingText, 15000);
+</script> -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Carter+One&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;1,100;1,200;1,300;1,400;1,500;1,600&family=Righteous&family=Titan+One&display=swap"
+  rel="stylesheet"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"
+/>
+<link rel="stylesheet" href="./step.css" />
+<link rel="stylesheet" href="./signup.css" />
+{% endblock %} {% block page_content %}
+<div>
+  <div class="spinner-bg" id="spinner-bg">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+
+  <main id="main" style="visibility: hidden">
+    <div class="left">
+      <div class="login_box">
+        <div class="logo">
+          <img
+            src="https://uploads-ssl.webflow.com/5e53d34464688e6f5960a338/610a36c2792530d601aaf35f_OneHash_Logo.svg"
+            class="logo-img"
+            aria-hidden="true"
+          />
+          <div class="tagline">
+            <div class="tagline_main">14 Days Trial on Us</div>
+            <div class="tagline_sub">No credit card required</div>
+          </div>
+        </div>
+        <v-form
+          @submit="onSubmit"
+          id="form"
+          v-slot="{meta}"
+          autocomplete="off"
+          novalidate="novalidate"
+        >
+        <div class="feedback" v-if="!meta.valid ">Invalid</div>
+          <div class="feedback" v-if="meta.valid ">valid</div>
+          <div class="row">
+            <div class="col-12 col-md-6 mb-1">
+              <v-field
+                class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+                name="first-name"
+                type="text"
+                placeholder="First Name"
+                v-model="firstname"
+                :rules="isRequired"
+              ></v-field>
+
+              <error-message
+                name="first-name"
+                as="div"
+                class="feedback error-feedback"
+              ></error-message>
+            </div>
+            <div class="col-12 col-md-6 mb-1">
+              <v-field
+                class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+                name="last-name"
+                type="text"
+                placeholder="Last Name"
+                :rules="isRequired"
+              ></v-field>
+
+              <error-message
+                name="last-name"
+                as="div"
+                class="feedback error-feedback"
+              ></error-message>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 mb-1 relative">
+              <v-field
+                v-slot="{meta,field,errorMessage}"
+                :rules="checkSubdomain"
+                :validateOnInput="true"
+                name="site-name"
+                v-model="sitename"
+              >
+                <input
+                  id="site-name"
+                  type="text"
+                  onpaste="return false;"
+                  oninput="restrictInput(event)"
+                  autocomplete="off"
+                  pattern="^[a-zA-Z0-9 ]+$"
+                  placeholder="Site name"
+                  v-bind="field"
+                  class="appearance-none placeholder:text-slate-600 block text-black-900 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500 lowercase"
+                />
+               
+   
+ 
+                <div v-if=" errorMessage" class="feedback error-feedback">
+                  Site name is invalid or not available
+                </div>
+                <div
+                  class="success-feedback feedback"
+                  v-if="meta.dirty && meta.valid "
+                > 
+                  {{_(sitename)}} Subdomain is available
+                </div>
+              </v-field>
+              <div class="span site-name-right">.onehash.is</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 mb-1 relative">
+              <v-field
+                class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+                name="company-name"
+                type="text"
+                placeholder="Company Name"
+                :rules="isRequired"
+              ></v-field>
+
+              <error-message
+                name="company-name"
+                as="div"
+                class="feedback error-feedback"
+              ></error-message>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 col-md-6 mb-1">
+              <v-field
+                class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500 lowercase"
+                name="email"
+                type="text"
+                placeholder="Email"
+                v-model="email"
+                :rules="isEmailRegex"
+              ></v-field>
+
+              <error-message
+                name="email"
+                as="div"
+                class="feedback error-feedback"
+              ></error-message>
+            </div>
+            <div class="col-12 col-md-6 mb-1">
+              <v-field
+                v-slot="{meta,field,errorMessage}"
+                :rules="checkPasswordStrength"
+                :validateOnInput="true"
+                name="password"
+              >
+                <input
+                  id="password"
+                  type="password"
+                  placeholder="Password"
+                  v-bind="field"
+                  class="appearance-none placeholder:text-slate-600 block text-black-900 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+                />
+                <div v-if=" errorMessage" class="feedback long-feedback">
+                  {{errorMessage}}
+                </div>
+                <div
+                  class="success-feedback feedback"
+                  v-if="meta.dirty && meta.valid "
+                >
+                  password is good to go
+                </div>
+              </v-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 col-md-6 mb-1 relative">
+              <v-field
+                style="padding-left: 50px !important"
+                class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+                name="phone"
+                autocomplete="off"
+                type="text"
+                pattern="^[0-9]+$"
+                id="phone"
+                placeholder="Phone Number"
+                :rules="isPhoneRegex"
+              ></v-field>
+
+              <error-message
+                name="phone"
+                as="div"
+                class="feedback error-feedback"
+              ></error-message>
+            </div>
+            <div class="col-12 col-md-6">
+              <input
+                
+                type="text"
+                pattern="^[0-9]+$"
+                name="otp"
+                @input="verifyOTP"
+                id="otp"
+                placeholder="Enter OTP"
+                v-model="otp"
+                class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+              />
+              <span id="otp-feedback" class="feedback"> </span>
+            </div>
+          </div>
+          <div>
+            <div class="w-100 flex justify-content-center">
+            <p style="font-size: small; padding-top:2%;">
+            By submitting the OTP, I accept the <a href="https://onehash.ai/terms-of-use" target="_blank">Terms of Use</a> and <a href="https://onehash.ai/privacy" target="_blank">Privacy Policy</a>
+          </p>
+        </div>
+          </div>
+          <div class="w-100 flex justify-content-center">
+            <button
+              :disabled="otpVerificationStatus.sendingOTP || otpVerificationStatus.otpSent || otpVerificationStatus.waitingForResend || otpVerificationStatus.otpVerified"
+              type="submit"
+              class="submit_btn drop-shadow-md mt-5 disabled:opacity-50"
+              style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              "
+            >
+              <span
+                v-if="!otpVerificationStatus.otpSent && !otpVerificationStatus.otpVerified && !otpVerificationStatus.sendingOTP"
+                >Send OTP</span
+              >
+              <span id="timer" v-if="!otpVerificationStatus.otpVerified"></span>
+              <span v-if="otpVerificationStatus.sendingOTP">Sending OTP</span>
+              <span v-if="otpVerificationStatus.otpVerified"
+                >Processing .... </span
+              >
+            </button>
+          </div>
+          <div class="w-100 flex justify-content-center">
+            <p style="font-size: small; padding-top:2%;">
+            <a href="./login" target="_self">Already Registered?</a>
+          </p>
+        </div>
+        </v-form>
+        
+      </div>
+    </div>
+    <div class="right">
+      <div class="ad">
+        <div class="ad-title mb-3">
+          <div>Get started with the</div>
+          <div class="text-black">Most powerfull all in one software</div>
+        </div>
+        <img src="/assets/bettersaas/hero.svg" alt="" />
+        <img src="/assets/bettersaas/hero3.svg" alt="" class="mt-4" />
+        
+      </div>
+    </div>
+    <div class="create" v-if="otpVerificationStatus.otpVerified">
+      
+    <div class="left">
+      <center>
+      <img src="/assets/bettersaas/loader.gif" alt="" class="mt-4" />
+      <div class="loader-container fade-in-animation"> 
+        <div class="loading-text animate__animated animate__fadeIn" >
+          Hey <b>{{_(firstname)}}</b> , <br>Sit back and relax while we creating your site <br><b>{{_(sitename)}}.onehash.is</b>
+        </div>
+      </div>
+    
+   
+    
+      <div class="container2">    
+        <div class="progress2 progress-moved">
+          <div class="progress-bar2" >
+          </div>                       
+        </div> 
+      </div>
+      <ol class="steps">
+       
+      <li
+        class="step"
+        data-step="1"
+        id="step1"
+        :class="{'is-complete':status.step1 == 'completed','is-active':status.step1 == 'active'}"
+      >
+        Creating site
+      </li>
+      <li
+        class="step"
+        data-step="2"
+        id="step2"
+        :class="{'is-complete':status.step2 == 'completed','is-active':status.step2 == 'active'}"
+      >
+        Creating user
+      </li>
+      <li
+        class="step"
+        data-step="3"
+        id="step3"
+        :class="{'is-complete':status.step3 == 'completed','is-active':status.step3 == 'active'}"
+      >
+        Redirecting
+      </li>
+      </ol>
+      
+    </center>
+  </div>
+  <div class="right">
+    <div class="ad">
+      <img src="https://www.radical.co.in/wp-content/uploads/2020/06/How-Long-Does-PPC-Take-to-Work.gif" style="height: 30%; width: 30%;" alt="" />
+      <div class="ad-title mb-3">
+        <div>Get started with the</div>
+        <div class="text-black">Most powerfull all in one software</div>
+      </div>
+      
+      <img src="/assets/bettersaas/hero3.svg" alt="" class="mt-4" />
+      
+    </div>
+  </div>
+    </div>
+  </main>
+</div>
+{% endblock %} {% block script %}
+<script>
+  function restrictInput(event) {
+            const inputField = event.target;
+            const currentValue = inputField.value;
+
+            // Remove special characters and spaces
+            const sanitizedValue = currentValue.replace(/[^a-zA-Z0-9]/g, '');
+
+            // Update the input field with the sanitized value
+            inputField.value = sanitizedValue;
+        }
+                   document.addEventListener("contextmenu", function (event) {
+                     event.preventDefault();
+                   });
+                   
+                   // Block opening of inspect element on Windows
+                   document.addEventListener("keydown", function (event) {
+                     // Check for F12 key or Ctrl+Shift+I (Inspect Element shortcut)
+                     if (
+                       event.key === "F12" ||
+                       (event.ctrlKey && event.shiftKey && event.key === "I")
+                     ) {
+                       event.preventDefault();
+                     }
+                   });
+                   
+                   // Block opening of inspect element on Mac
+                   document.addEventListener("keydown", function (event) {
+                     // Check for Cmd+Option+I (Inspect Element shortcut)
+                     if (event.metaKey && event.altKey && event.key === "I") {
+                       event.preventDefault();
+                     }
+                   });
+</script>
+<script>
+  $( 'body' ).on( 'keypress', ':input[pattern]', function( ev ) {
+      var regex  = new RegExp( $(this).attr( 'pattern' ) );
+      var newVal = $(this).val() + String.fromCharCode(!ev.charCode ? ev.which : ev.charCode);
+
+      if ( regex.test( newVal ) ) {
+          return true;
+      } else {
+          ev.preventDefault();
+          return false;
+      }
+  } );
+</script>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+  integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"
+  integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://www.google.com/recaptcha/api.js?render=6LeP2esnAAAAAEYxmv3RteO1BTQnQQGf5YASo-qx"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js"></script>
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/vee-validate@4.5.8/dist/vee-validate.js"></script>
+<script src="./config.js"></script>
+<script src="./signup.js"></script>
+
+; {% endblock %}
